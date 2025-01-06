@@ -1,9 +1,19 @@
 import time
 
-h = 23
-m = 59
-s = 55
+def afficher_heure():
+    check = 0
+    while check == 0:
+        val1 = int(input("Rentrez une heure : "))
+        val2 = int(input("Rentrez les minutes : "))
+        if val1 < 0 or val1 > 24 or val2 < 0 or val2 > 60 :
+            print("Valeur invalide")
+        else :
+            check = 1
+    val3 = 00
+    horaire = (val1, val2, val3)
+    return horaire
 
+h, m, s = afficher_heure()
 val_h = str(0)
 val_m = str(0)
 val_s = str(0)
