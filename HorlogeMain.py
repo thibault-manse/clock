@@ -27,8 +27,8 @@ veref = heure_voulu()
 
 if veref == "y" or veref == "Y": #Horloge préconfiguré
     while True:
-        time_live = time.strftime("%H:%M:%S")
-        print(f"{time_live}", end="\r")
+        temps = time.strftime("%H:%M:%S")
+        print(f"{temps}", end="\r")
         time.sleep(1)
 
 
