@@ -1,6 +1,6 @@
-import time
+import time #sert a utiliser time.sleep
 
-def afficher_heure():
+def afficher_heure(): #Réglage de l'heure
     check = 0
     while check == 0:
         val1 = int(input("Rentrez une heure : "))
@@ -14,6 +14,8 @@ def afficher_heure():
     return horaire
 
 h, m, s = afficher_heure()
+
+#Afficher 01:00:00 et non 1:0:0 (transformer en str)
 val_h = str(0)
 val_m = str(0)
 val_s = str(0)
@@ -21,13 +23,12 @@ val_s = str(0)
 heure = "%02d" % h
 minute = "%02d" % m
 seconde = "%02d" % s
+#-----------------------------
 
-i = 0
-
-while i < 1:
-    print("{H}:{M}:{S}".format(H = heure, M = minute, S = seconde))
+while True: #Boucle affichage de l'heure
+    print("{H}:{M}:{S}".format(H = heure, M = minute, S = seconde), end="\r") #affiche l'heure sur une seule ligne
     s += 1
-    seconde = chr(ord(val_s)+s)
+    seconde = chr(ord(val_s)+s) # +1 a la valeur ascii
     seconde = "%02d" % s
     if s == 60:
         m += 1
