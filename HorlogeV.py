@@ -4,16 +4,6 @@ import threading
 
 #afficher_heure()
 
-#alarme
-def alarme(heure_alarme):
-    while True:
-        maintenant = datetime.datetime.now().strftime("%H:%M:%S")
-        if maintenant == heure_alarme:
-            print("\nAlarme ! Il est temps de se réveiller !")
-            break
-        #time.sleep(1)
-
-
 
 def set_alarm():
     alarm_time = input("Entrez l'heure de l'alarme (HH:MM:SS): ")
@@ -34,9 +24,11 @@ def main():
         #time.sleep(1)
 
         if check_alarm(alarm_time):
-            print("Alarme ! Il est temps de se réveiller !")
+            print("Alarme ! Il est temps d'aller à la plateforme")
         time.sleep(1)
 
 if __name__ == "__main__":
     main()
+
+
 
