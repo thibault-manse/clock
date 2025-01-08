@@ -4,7 +4,7 @@ def heure_voulu(): #Choix heure auto ou configurer
     check = 0
     while check == 0:
         val = str(input("Voulez vous une heure prés définie ? (Y ou N) : ").lower())
-        if val == "Y" or val == "y" or val == "N" or val == "n":
+        if val == "y" or val == "n":
             check = 1
         else :
             print("Valeur incorrect")
