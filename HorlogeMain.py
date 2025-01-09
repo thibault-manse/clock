@@ -1,7 +1,9 @@
 import time #sert a utiliser time.sleep
 import keyboard
+from threading import Event
 
 paused = False 
+pause_event = Event()
 
 def heure_voulu(): #Choix heure auto ou configurer
     check = 0
@@ -64,8 +66,25 @@ def set_alarm():
         # Attendre 30 secondes avant de vérifier à nouveau l'heure
         time.sleep(1)
 
+def toggle_pause(e):
+    global paused
+    paused = not paused
+    if paused:
+        pause_event.clear()
+    else:
+        pause_event.set()
+    print("\nHorloge en pause" if paused else "\nHorloge en marche")
+
+
 # Demander à l'utilisateur s'il souhaite régler une alarme
 def main():
+    
+    global paused
+    pause_event.set()
+    
+    keyboard.on_press_key("space", toggle_pause)
+    print("\nAppuyez sur 'espace' pour mettre en pause/reprendre")
+    
     choice = input("Voulez-vous régler une alarme ? (oui/non): ").lower()
     if choice == "oui":
         set_alarm()
@@ -73,47 +92,64 @@ def main():
         print("vous n'avez pas prédéfini d'alarme. Au revoir!")
 
 
-    if veref == "y" or veref == "Y": #Horloge préconfiguré
-        while True:
-            temps = time.strftime("%H:%M:%S")
-            print(f"{temps}", end="\r")
-            time.sleep(1)
+    try:
+        if veref == "y": #Horloge préconfiguré
+            pause_time = None
+            initial_time = None
             
-    else : #Horloge configurer
-        h, m, s = afficher_heure()
+            while True:
+                if not paused:
+                    if pause_time is not None:
+                        # Calculer le décalage depuis la pause
+                        offset = time.time() - pause_time
+                        initial_time = time.time() - offset
+                        pause_time = None
+                    
+                    if initial_time is None:
+                        initial_time = time.time()
+                        
+                    current_time = time.localtime(initial_time)
+                    temps = time.strftime("%H:%M:%S", current_time)
+                    print(f"{temps}", end="\r")
+                    initial_time += 1
+                    time.sleep(1)
+                else:
+                    if pause_time is None:
+                        pause_time = time.time()
+                    time.sleep(0.1)
 
-        #Afficher 01:00:00 et non 1:0:0 (transformer en str)
-        val_h = str(0)
-        val_m = str(0)
-        val_s = str(0)
+        else: #Horloge configurer
+            h, m, s = afficher_heure()
+            paused_time = None
 
-        heure = "%02d" % h
-        minute = "%02d" % m
-        seconde = "%02d" % s
-        #-----------------------------
-
-        while True: #Boucle affichage de l'heure
-            print("{H}:{M}:{S}".format(H = heure, M = minute, S = seconde), end="\r") #affiche l'heure sur une seule ligne
-            s += 1
-            seconde = chr(ord(val_s)+s) # +1 a la valeur ascii
-            seconde = "%02d" % s
-            if s == 60:
-                m += 1
-                s = 0
-                minute = chr(ord(val_m)+m)
-                minute = "%02d" % m
-                seconde = "%02d" % 0
-                if m == 60:
-                    h += 1
-                    m = 0
-                    heure = chr(ord(val_h)+h)
-                    heure = "%02d" % h
-                    minute = "%02d" % 0
-                    if h == 24:
-                        h = 0
-                        heure = "%02d" % 0
-            time.sleep(1)
-        
+            while True: #Boucle affichage de l'heure
+                if not paused:
+                    if paused_time is not None:
+                        # Reprendre depuis l'heure de pause
+                        h, m, s = paused_time
+                        paused_time = None
+                        
+                    print(f"{h:02d}:{m:02d}:{s:02d}", end="\r")
+                    s += 1
+                    if s == 60:
+                        m += 1
+                        s = 0
+                        if m == 60:
+                            h += 1
+                            m = 0
+                            if h == 24:
+                                h = 0
+                    time.sleep(1)
+                else:
+                    if paused_time is None:
+                        paused_time = (h, m, s)
+                    time.sleep(0.1)
+    except KeyboardInterrupt:
+        print("\nAu revoir!")
+    finally:
+        keyboard.unhook_all()
+                
+            
 # Exécuter le programme
 if __name__ == "__main__":
     main()
