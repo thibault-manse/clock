@@ -1,10 +1,14 @@
-import time #sert a utiliser time.sleep
+import time
+from tkinter import Y #sert a utiliser time.sleep
+import keyboard
+
+paused = False 
 
 def heure_voulu(): #Choix heure auto ou configurer
     check = 0
     while check == 0:
-        val = str(input("Voulez vous une heure prés définie ? (Y ou N) : "))
-        if val == "Y" or val == "y" or val == "N" or val == "n":
+        val = str(input("Voulez vous une heure prédéfinie ? (Y ou N) : ").lower())
+        if val in ("y", "n"):
             check = 1
         else :
             print("Valeur incorrect")
@@ -59,7 +63,7 @@ def set_alarm():
             break  # Sort de la boucle une fois l'alarme déclenchée
         
         # Attendre 30 secondes avant de vérifier à nouveau l'heure
-        time.sleep(30)
+        time.sleep(1)
 
 # Demander à l'utilisateur s'il souhaite régler une alarme
 def main():
@@ -69,49 +73,48 @@ def main():
     else:
         print("vous n'avez pas prédéfini d'alarme. Au revoir!")
 
+
+    if veref == "y" or veref == "Y": #Horloge préconfiguré
+        while True:
+            temps = time.strftime("%H:%M:%S")
+            print(f"{temps}", end="\r")
+            time.sleep(1)
+            
+    else : #Horloge configurer
+        h, m, s = afficher_heure()
+
+        #Afficher 01:00:00 et non 1:0:0 (transformer en str)
+        val_h = str(0)
+        val_m = str(0)
+        val_s = str(0)
+
+        heure = "%02d" % h
+        minute = "%02d" % m
+        seconde = "%02d" % s
+        #-----------------------------
+
+        while True: #Boucle affichage de l'heure
+            print("{H}:{M}:{S}".format(H = heure, M = minute, S = seconde), end="\r") #affiche l'heure sur une seule ligne
+            s += 1
+            seconde = chr(ord(val_s)+s) # +1 a la valeur ascii
+            seconde = "%02d" % s
+            if s == 60:
+                m += 1
+                s = 0
+                minute = chr(ord(val_m)+m)
+                minute = "%02d" % m
+                seconde = "%02d" % 0
+                if m == 60:
+                    h += 1
+                    m = 0
+                    heure = chr(ord(val_h)+h)
+                    heure = "%02d" % h
+                    minute = "%02d" % 0
+                    if h == 24:
+                        h = 0
+                        heure = "%02d" % 0
+            time.sleep(1)
+        
 # Exécuter le programme
 if __name__ == "__main__":
     main()
-
-
-if veref == "y" or veref == "Y": #Horloge préconfiguré
-    while True:
-        temps = time.strftime("%H:%M:%S")
-        print(f"{temps}", end="\r")
-        time.sleep(1)
-
-
-else : #Horloge configurer
-    h, m, s = afficher_heure()
-
-    #Afficher 01:00:00 et non 1:0:0 (transformer en str)
-    val_h = str(0)
-    val_m = str(0)
-    val_s = str(0)
-
-    heure = "%02d" % h
-    minute = "%02d" % m
-    seconde = "%02d" % s
-    #-----------------------------
-
-    while True: #Boucle affichage de l'heure
-        print("{H}:{M}:{S}".format(H = heure, M = minute, S = seconde), end="\r") #affiche l'heure sur une seule ligne
-        s += 1
-        seconde = chr(ord(val_s)+s) # +1 a la valeur ascii
-        seconde = "%02d" % s
-        if s == 60:
-            m += 1
-            s = 0
-            minute = chr(ord(val_m)+m)
-            minute = "%02d" % m
-            seconde = "%02d" % 0
-            if m == 60:
-                h += 1
-                m = 0
-                heure = chr(ord(val_h)+h)
-                heure = "%02d" % h
-                minute = "%02d" % 0
-                if h == 24:
-                    h = 0
-                    heure = "%02d" % 0
-        time.sleep(1)
