@@ -1,5 +1,4 @@
-import time
-from tkinter import Y #sert a utiliser time.sleep
+import time #sert a utiliser time.sleep
 import keyboard
 
 paused = False 
