@@ -1,153 +1,155 @@
-import time #time library to use time.sleep()
-import os #allows the program to clear the terminal using os.system('cls')
+import time #sert a utiliser time.sleep
+import keyboard
+from threading import Event
 
+paused = False 
+pause_event = Event()
 
-def AMPM_request():
-    global ampm_format
-    ampm_format=None
-    while ampm_format==None:
-        AMPM_check=input("Would you like to use the AM/PM format? (Y/N): ").upper()
-        if AMPM_check !="N" and AMPM_check!="Y":
-            print("invalid response. please enter Y or N")
-            AMPM_check=input("Would you like to use the AM/PM format? (Y/N)").upper()
-
-        elif AMPM_check=="Y":
-            ampm_format=True
-
-        elif AMPM_check=="N":
-            ampm_format=False
-
-
-
-
-def predefined_request(): #predefined time prompt
+def heure_voulu(): #Choix heure auto ou configurer
     check = 0
     while check == 0:
-        val = str(input("Would you like a predefined clock? (Y or N) : ")).upper()
-        if val == "Y" or val == "N":
+        val = str(input("Voulez vous une heure prédéfinie ? (Y ou N) : ").lower())
+        if val in ("y", "n"):
             check = 1
         else :
-            print("Incorrect value")
+            print("Valeur incorrect")
     return val
 
-def manual_config(): #manual clock set up
+def afficher_heure(): #Réglage de l'heure
     check = 0
     while check == 0:
-        global val1
-        val1 = int(input("Enter the hour : "))
-        val2 = int(input("Enter the minute : "))
+        val1 = int(input("Rentrez une heure : "))
+        val2 = int(input("Rentrez les minutes : "))
         if val1 < 0 or val1 > 24 or val2 < 0 or val2 > 60 :
-            print("Invalid value")
+            print("Valeur invalide")
         else :
             check = 1
-        
-        if ampm_format==True:
-            global AMPM
-            AMPM=None
-            while AMPM==None:
-                AMPM=input("AM or PM?").upper()
-                if AMPM!="AM" and AMPM!="PM":
-                    print("Please enter AM or AM")
-                    AMPM=input("AM or PM?").upper()
-
-            while val1>12 or val1<0:
-                print("Please enter a value between 0 and 12")
-                val1 = int(input("Enter the hour : "))
     val3 = 00
-    mclock = (val1, val2, val3)
+    horaire = (val1, val2, val3)
+    return horaire
 
+veref = heure_voulu()
 
-    return mclock
-
-AMPM_request()
-veref = predefined_request()
-
-
-if veref == "Y": #Preconfigured clock
-    while True:
-        aclock = time.strftime("%H:%M:%S")
-
-        if ampm_format==True:
-            if int(time.strftime("%H"))>=12:
-                    AMPM="PM"
-                    if int(time.strftime("%H"))==12:
-                        print("12:"+time.strftime(":%M:%S"), AMPM,"                         ", end="\r")
-                    elif int(time.strftime("%H"))-12==10 or int(time.strftime("%H"))-12==11 or int(time.strftime("%H"))-12==12:
-                        print(int(time.strftime("%H"))-12,":", int(time.strftime("%M")),":",int(time.strftime("%S")) ,AMPM,"                                 ", end="\r")
-                    else:
-                        print(int(time.strftime("%H"))-12,":", int(time.strftime("%M")),":",int(time.strftime("%S")) ,AMPM,"                                 ", end="\r")
-
-                    
-            elif int(time.strftime("%H"))==0:
-                AMPM="AM"
-                print("12:", time.strftime(":%M:%S"), AMPM, end="\r")
-
-            elif int(time.strftime("%H"))-12<=0:
-                AMPM="AM"
-                print(f"{aclock}", AMPM, end="\r")
-
-        else:
-            print(f"{aclock}", end="\r")
-        time.sleep(1)
-
-
-            
-
-
-else : #manual clock
-    h, m, s = manual_config()
-
-    #to show 01:00:00 and not 1:0:0 (transform into str)
-    val_h = str(0)
-    val_m = str(0)
-    val_s = str(0)
-
-    hour = "%02d" % h
-    minute = "%02d" % m
-    second = "%02d" % s
-    #-----------------------------
-
-    os.system('cls')
-
-    while True: #clock loop
-
-        s += 1
-        second = chr(ord(val_s)+s) # +1 to the ascii value
-        second = "%02d" % s
-        if s == 60:
-            m += 1
-            s =0
-            minute = chr(ord(val_m)+m)
-            minute = "%02d" % m
-            second = "%02d" % 0
-            if m == 60:
-                h += 1
-                m = 0
-                hour = chr(ord(val_h)+h)
-                hour = "%02d" % h
-                minute = "%02d" % 0
-                if h == 24:
-                    h = 0
-                    hour = "%02d" % 0
-        if m==0 and s==0:
-            os.system("cls")
-        if ampm_format==True:
-            
-            if h>=12:
-                AMPM="PM"
-                print("{H}:{M}:{S}".format(H = hour, M = minute, S = second), AMPM ,"                                  ", end="\r")
-                if h>=13:
-                    print(f"{int(hour)-12}:""{M}:{S}".format( M = minute, S = second), AMPM,"                          ", end="\r")
-            elif h==0:
-                AMPM="AM"
-                print("12:{M}:{S}".format( M = minute, S = second) , AMPM,"                                           ", end="\r")
-
-            elif h-12<=0:
-                AMPM="AM"
-                print("{H}:{M}:{S}".format(H = hour, M = minute, S = second), AMPM,"                                        ", end="\r")
-        else:
-            print("{H}:{M}:{S}".format(H = hour, M = minute, S = second), "                                    ", end="\r") #to show the clock on one line
-            
-
+# Fonction pour définir l'alarme
+def set_alarm():
+    print("Bienvenue dans l'alarme!")
+    
+    # Demander l'heure de l'alarme sous le format HH:MM
+    alarm_time = input("Entrez l'heure de l'alarme (HH:MM): ")
+    
+    # Vérification du format
+    try:
+        alarm_hour, alarm_minute = map(int, alarm_time.split(":"))
         
+        if alarm_hour < 0 or alarm_hour > 23 or alarm_minute < 0 or alarm_minute > 59:
+            print("L'heure ou les minutes sont invalides. Veuillez entrer une heure valide.")
+            return
+    except ValueError:
+        print("Le format de l'heure est incorrect. Assurez-vous de saisir l'heure sous le format HH:MM.")
+        return
+    
+    # Afficher l'heure choisie pour l'alarme
+    print(f"Alarme définie pour {alarm_hour:02d}:{alarm_minute:02d}")
+
+    # Boucle infinie pour vérifier l'heure actuelle
+    while True:
+        # Obtenez l'heure et les minutes actuelles
+        current_time = time.localtime()
+        current_hour = current_time.tm_hour
+        current_minute = current_time.tm_min
+        
+        # Vérifiez si l'heure actuelle correspond à l'heure de l'alarme
+        if current_hour == alarm_hour and current_minute == alarm_minute:
+            print(f"Il est {current_hour:02d}:{current_minute:02d}. C'est l'heure d'aller à la plateforme !!")
+            break  # Sort de la boucle une fois l'alarme déclenchée
+        
+        # Attendre 30 secondes avant de vérifier à nouveau l'heure
         time.sleep(1)
+
+def toggle_pause(e):
+    global paused
+    paused = not paused
+    if paused:
+        pause_event.clear()
+    else:
+        pause_event.set()
+    print("\nHorloge en pause" if paused else "\nHorloge en marche")
+
+
+# Demander à l'utilisateur s'il souhaite régler une alarme
+def main():
+    
+    global paused
+    pause_event.set()
+    
+    keyboard.on_press_key("space", toggle_pause)
+    print("\nAppuyez sur 'espace' pour mettre en pause/reprendre")
+    
+    choice = input("Voulez-vous régler une alarme ? (oui/non): ").lower()
+    if choice == "oui":
+        set_alarm()
+    else:
+        print("vous n'avez pas prédéfini d'alarme. Au revoir!")
+
+
+    try:
+        if veref == "y": #Horloge préconfiguré
+            pause_time = None
+            initial_time = None
+            
+            while True:
+                if not paused:
+                    if pause_time is not None:
+                        # Calculer le décalage depuis la pause
+                        offset = time.time() - pause_time
+                        initial_time = time.time() - offset
+                        pause_time = None
+                    
+                    if initial_time is None:
+                        initial_time = time.time()
+                        
+                    current_time = time.localtime(initial_time)
+                    temps = time.strftime("%H:%M:%S", current_time)
+                    print(f"{temps}", end="\r")
+                    initial_time += 1
+                    time.sleep(1)
+                else:
+                    if pause_time is None:
+                        pause_time = time.time()
+                    time.sleep(0.1)
+
+        else: #Horloge configurer
+            h, m, s = afficher_heure()
+            paused_time = None
+
+            while True: #Boucle affichage de l'heure
+                if not paused:
+                    if paused_time is not None:
+                        # Reprendre depuis l'heure de pause
+                        h, m, s = paused_time
+                        paused_time = None
+                        
+                    print(f"{h:02d}:{m:02d}:{s:02d}", end="\r")
+                    s += 1
+                    if s == 60:
+                        m += 1
+                        s = 0
+                        if m == 60:
+                            h += 1
+                            m = 0
+                            if h == 24:
+                                h = 0
+                    time.sleep(1)
+                else:
+                    if paused_time is None:
+                        paused_time = (h, m, s)
+                    time.sleep(0.1)
+    except KeyboardInterrupt:
+        print("\nAu revoir!")
+    finally:
+        keyboard.unhook_all()
+                
+            
+# Exécuter le programme
+if __name__ == "__main__":
+    main()
