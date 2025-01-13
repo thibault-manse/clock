@@ -8,7 +8,6 @@ pause_event = Event()
 pause_event.set()
 
 def request_ampm_format():
-
     """Ask the user if they want to use AM/PM format."""
     global ampm_format
     ampm_format = None
@@ -22,7 +21,6 @@ def request_ampm_format():
             print("Invalid response. Please enter Y or N.")
 
 def predefined_request():
-
     """Ask the user if they want a predefined clock."""
     while True:
         val = input("Would you like to use a predefined clock? (Y/N): ").strip().upper()
@@ -32,7 +30,6 @@ def predefined_request():
             print("Invalid response. Please enter Y or N.")
 
 def manual_config():
-
     """Allow the user to manually configure the clock."""
     while True:
         try:
@@ -51,7 +48,6 @@ def manual_config():
         except ValueError:
             print("Invalid input. Please enter numbers only.")
 
-
 def set_alarm():
     """Allow the user to set an alarm."""
     print("Welcome to the alarm feature!")
@@ -61,12 +57,11 @@ def set_alarm():
             alarm_hour, alarm_minute = map(int, alarm_time.split(":"))
             if 0 <= alarm_hour < 24 and 0 <= alarm_minute < 60:
                 print(f"Alarm set for {alarm_hour:02d}:{alarm_minute:02d}.")
-                break 
+                return alarm_hour, alarm_minute
             else:
                 print("Invalid time. Please enter a valid hour and minute.")
         except ValueError:
             print("Invalid format. Please enter the time in HH:MM format.")
-    
 
 
 def toggle_pause(e):
@@ -81,8 +76,6 @@ def toggle_pause(e):
         print("\nClock resumed.")
 
 def run_clock(hour, minute, second, alarm=None):
-
-
     """Run the clock with optional alarm functionality."""
     global paused
     keyboard.on_press_key("space", toggle_pause)
