@@ -126,8 +126,19 @@ def main():
         hour, minute, second = current_time.tm_hour, current_time.tm_min, current_time.tm_sec
     else:
         hour, minute, second, _ = manual_config()
-
+        
+        
     alarm_choice = input("Would you like to set an alarm? (Y/N): ").strip().upper()
+    
+    
+    while alarm_choice!="Y" and alarm_choice!="N":
+        
+        if alarm_choice in ("Y", "N"):
+            return alarm_choice
+        else:
+            print("Invalid response. Please enter Y or N.")
+            alarm_choice = input("Would you like to set an alarm? (Y/N): ").strip().upper()
+        
     alarm = None
     if alarm_choice == "Y":
         alarm = set_alarm()
